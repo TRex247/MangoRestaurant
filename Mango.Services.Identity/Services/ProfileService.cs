@@ -29,7 +29,6 @@ namespace Mango.Services.Identity.Services
 
             List<Claim> claims = userClaims.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
-
             claims.Add(new Claim(JwtClaimTypes.GivenName, user.FirstName));
             claims.Add(new Claim(JwtClaimTypes.FamilyName, user.LastName));
             if (_userManager.SupportsUserRole)
@@ -48,6 +47,8 @@ namespace Mango.Services.Identity.Services
                     }
                 }
             }
+
+            context.IssuedClaims = claims;
         }
 
         public async Task IsActiveAsync(IsActiveContext context)
