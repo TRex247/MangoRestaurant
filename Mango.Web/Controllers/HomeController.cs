@@ -30,6 +30,7 @@ namespace Mango.Web.Controllers
             return View(list);
         }
 
+        [Authorize]
         public async Task<IActionResult> Details(int productId)
         {
             ProductDto model = new();
