@@ -1,7 +1,33 @@
+using Mango.Web;
+using Mango.Web.Services;
+using Mango.Web.Services.IServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpClient<IProductService, ProductService>();
+SD.ProductApiBase = builder.Configuration["ServiceUrls:ProductAPI"];
+
+builder.Services.AddScoped<IProductService, ProductService>();  
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+}).AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
+.AddOpenIdConnect("oidc", options =>
+{
+    options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.ClientId = "mango";
+    options.ClientSecret = "secret";
+    options.ResponseType = "code";
+
+    options.TokenValidationParameters.NameClaimType = "name";
+    options.TokenValidationParameters.RoleClaimType = "role";
+    options.SaveTokens = true;
+});
 
 var app = builder.Build();
 
@@ -17,7 +43,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -48,6 +48,44 @@ namespace Mango.Services.ProductApi.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1,
+                            CategoryName = "Appetizer",
+                            Description = "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+                            ImageUrl = "https://tonyeblob.blob.core.windows.net/mango/14.jpg",
+                            Name = "Samosa",
+                            Price = 15.0
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            CategoryName = "Appetizer",
+                            Description = "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+                            ImageUrl = "https://tonyeblob.blob.core.windows.net/mango/12.jpg",
+                            Name = "Paneer Tikka",
+                            Price = 13.99
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            CategoryName = "Dessert",
+                            Description = "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+                            ImageUrl = "https://tonyeblob.blob.core.windows.net/mango/11.jpg",
+                            Name = "Sweet Pie",
+                            Price = 10.99
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            CategoryName = "Entree",
+                            Description = "Praesent scelerisque, mi sed ultrices condimentum, lacus ipsum viverra massa, in lobortis sapien eros in arcu. Quisque vel lacus ac magna vehicula sagittis ut non lacus.<br/>Sed volutpat tellus lorem, lacinia tincidunt tellus varius nec. Vestibulum arcu turpis, facilisis sed ligula ac, maximus malesuada neque. Phasellus commodo cursus pretium.",
+                            ImageUrl = "https://tonyeblob.blob.core.windows.net/mango/13.jpg",
+                            Name = "Pav Bhaji",
+                            Price = 15.0
+                        });
                 });
 #pragma warning restore 612, 618
         }
