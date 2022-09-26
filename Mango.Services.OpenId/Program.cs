@@ -1,4 +1,6 @@
+using Mango.Services.OpenId;
 using Mango.Services.OpenId.Data;
+using Mango.Services.OpenId.Initializer;
 using Mango.Services.OpenId.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -20,8 +22,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     // to replace the default OpenIddict entities.
     options.UseOpenIddict();
 });
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+//builder.ServicesAddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -111,6 +113,9 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore();
     });
 
+builder.Services.AddHostedService<Worker>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -136,8 +141,18 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+var serviceScopeFactory = app.Services.GetService<IServiceScopeFactory>();
+using (var scope = serviceScopeFactory.CreateScope())
+{
+    var dbIntitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    dbIntitializer.Initialize();
+}
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapRazorPages();
+});
 
 app.Run();
