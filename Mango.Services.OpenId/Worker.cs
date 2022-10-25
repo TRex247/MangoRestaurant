@@ -49,10 +49,6 @@ namespace Mango.Services.OpenId
                     Permissions.Scopes.Profile,
                     Permissions.Scopes.Roles,
                     Permissions.Prefixes.Scope + "mango"
-                },
-                    Requirements =
-                {
-                    Requirements.Features.ProofKeyForCodeExchange
                 }
                 });
             }

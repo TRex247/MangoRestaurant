@@ -1,6 +1,9 @@
 using Mango.Web;
+using Mango.Web.Models;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,18 +17,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "oidc";
+    options.DefaultChallengeScheme = "oidc"; // OpenIdConnectDefaults.AuthenticationScheme
 }).AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
 .AddOpenIdConnect("oidc", options =>
 {
-    options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+    //oidc
+    //options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+    options.Authority = builder.Configuration["ServiceUrls:OpenIdAPI"];
     options.GetClaimsFromUserInfoEndpoint = true;
-    options.ClientId = "mango";
-    options.ClientSecret = "secret";
-    options.ResponseType = "code";
+    options.ClientId = "mango_old";
+    options.ClientSecret = "secret".Sha256();
+    options.ResponseType = OpenIdConnectResponseType.Code; // "code";
 
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
+    options.Scope.Add("mango");
     options.SaveTokens = true;
 });
 
