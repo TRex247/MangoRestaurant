@@ -1,6 +1,7 @@
 using AutoMapper;
 using Mango.Services.ShoppingCartApi;
 using Mango.Services.ShoppingCartApi.DbContexts;
+using Mango.Services.ShoppingCartApi.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddControllers();
 
