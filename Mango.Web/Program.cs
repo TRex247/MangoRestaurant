@@ -2,6 +2,7 @@ using Mango.Web;
 using Mango.Web.Models;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -31,6 +32,8 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = "mango_old";
     options.ClientSecret = "secret".Sha256();
     options.ResponseType = OpenIdConnectResponseType.Code; // "code";
+    options.ClaimActions.MapJsonKey("role", "role", "role");
+    options.ClaimActions.MapJsonKey("sub", "sub", "sub");
 
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
