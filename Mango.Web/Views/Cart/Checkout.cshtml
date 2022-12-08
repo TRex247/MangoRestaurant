@@ -119,3 +119,16 @@
         </div>
     </form>
 }
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(() => {
+            $(".form_datetime").datetimepicker({
+                format: 'YYYY-MM-DD',
+                defaultDate: new Date(),
+                minDate: new Date(),
+            });
+            //$(".form_datetime").datetimepicker('setStartDate', new Date());
+        });
+    </script>
+}
