@@ -2,6 +2,7 @@
 using Mango.Services.OrderApi.Messages;
 using Mango.Services.OrderApi.Models;
 using Mango.Services.OrderApi.Repository;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -9,11 +10,46 @@ namespace Mango.Services.OrderApi.Messaging
 {
     public class AzureServiceBusConsumer
     {
+        private readonly string serviceBusConnectionString;
+        private readonly string checkoutMessageTopic;
+        private readonly string subscriptionCheckout;
         private readonly OrderRepository _orderRepository;
 
-        public AzureServiceBusConsumer(OrderRepository orderRepository)
+        private ServiceBusProcessor checkOutProcessor;
+
+        private readonly IConfiguration _configuration;
+
+        public AzureServiceBusConsumer(OrderRepository orderRepository, IConfiguration configuration)
         {
             _orderRepository = orderRepository;
+            _configuration = configuration;
+
+            serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+            checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
+            subscriptionCheckout = _configuration.GetValue<string>("SubscriptionCheckout");
+
+            var client = new ServiceBusClient(serviceBusConnectionString);
+
+            checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
+        }
+
+        public async Task Start()
+        {
+            checkOutProcessor.ProcessMessageAsync += OnCheckoutMessageReceived;
+            checkOutProcessor.ProcessErrorAsync += ErrorHandler;
+            await checkOutProcessor.StartProcessingAsync();
+        }
+
+        public async Task Stop()
+        {
+            await checkOutProcessor.StopProcessingAsync();
+            await checkOutProcessor.DisposeAsync();
+        }
+
+        Task ErrorHandler(ProcessErrorEventArgs args)
+        {
+            Console.WriteLine(args.Exception.ToString());
+            return Task.CompletedTask;
         }
 
         private async Task OnCheckoutMessageReceived(ProcessMessageEventArgs args)
