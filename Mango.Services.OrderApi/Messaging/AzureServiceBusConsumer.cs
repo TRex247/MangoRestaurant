@@ -15,10 +15,12 @@ namespace Mango.Services.OrderApi.Messaging
         private readonly string checkoutMessageTopic;
         private readonly string subscriptionCheckout;
         private readonly string orderPaymentProcessTopic;
+        private readonly string orderUpdatePaymentResultTopic;
 
         private readonly OrderRepository _orderRepository;
 
         private ServiceBusProcessor checkOutProcessor;
+        private ServiceBusProcessor orderUpdatePaymentStatusProcessor;
 
         private readonly IConfiguration _configuration;
         private readonly IMessageBus _messageBus;
@@ -33,10 +35,12 @@ namespace Mango.Services.OrderApi.Messaging
             checkoutMessageTopic = _configuration.GetValue<string>("CheckoutMessageTopic");
             subscriptionCheckout = _configuration.GetValue<string>("SubscriptionCheckout");
             orderPaymentProcessTopic = _configuration.GetValue<string>("OrderPaymentProcessTopic");
+            orderUpdatePaymentResultTopic = _configuration.GetValue<string>("OrderUpdatePaymentResultTopic");
 
             var client = new ServiceBusClient(serviceBusConnectionString);
 
             checkOutProcessor = client.CreateProcessor(checkoutMessageTopic, subscriptionCheckout);
+            orderUpdatePaymentStatusProcessor = client.CreateProcessor(orderUpdatePaymentResultTopic, subscriptionCheckout);
         }
 
         public async Task Start()
@@ -44,12 +48,19 @@ namespace Mango.Services.OrderApi.Messaging
             checkOutProcessor.ProcessMessageAsync += OnCheckoutMessageReceived;
             checkOutProcessor.ProcessErrorAsync += ErrorHandler;
             await checkOutProcessor.StartProcessingAsync();
+
+            orderUpdatePaymentStatusProcessor.ProcessMessageAsync += OnOrderPaymentUpdateReceived;
+            orderUpdatePaymentStatusProcessor.ProcessErrorAsync += ErrorHandler;
+            await orderUpdatePaymentStatusProcessor.StartProcessingAsync();
         }
 
         public async Task Stop()
         {
             await checkOutProcessor.StopProcessingAsync();
             await checkOutProcessor.DisposeAsync();
+
+            await orderUpdatePaymentStatusProcessor.StopProcessingAsync();
+            await orderUpdatePaymentStatusProcessor.DisposeAsync();
         }
 
         Task ErrorHandler(ProcessErrorEventArgs args)
@@ -61,7 +72,6 @@ namespace Mango.Services.OrderApi.Messaging
         private async Task OnCheckoutMessageReceived(ProcessMessageEventArgs args)
         {
             var message = args.Message;
-
             var body = Encoding.UTF8.GetString(message.Body);
 
             CheckoutHeaderDto checkoutheaderDto = JsonConvert.DeserializeObject<CheckoutHeaderDto>(body);
@@ -118,6 +128,17 @@ namespace Mango.Services.OrderApi.Messaging
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private async Task OnOrderPaymentUpdateReceived(ProcessMessageEventArgs args)
+        {
+            var message = args.Message;
+            var body = Encoding.UTF8.GetString(message.Body);
+
+            UpdatePaymentResultMessage paymentResultMessage = JsonConvert.DeserializeObject<UpdatePaymentResultMessage>(body);
+
+            await _orderRepository.UpdateOrderPaymentStatus(paymentResultMessage.OrderId, paymentResultMessage.Status);
+            await args.CompleteMessageAsync(args.Message);
         }
     }
 }
