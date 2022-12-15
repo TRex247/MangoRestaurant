@@ -9,5 +9,6 @@ namespace Mango.Services.OrderApi.Messages
         public string CVV { get; set; }
         public string ExpiryMonthYear { get; set; }
         public double OrderTotal { get; set; }
+        public string Email { get; set; }
     }
 }
