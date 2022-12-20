@@ -32,7 +32,7 @@ builder.Services.AddAuthentication(options =>
     //options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
     options.Authority = builder.Configuration["ServiceUrls:OpenIdAPI"];
     options.GetClaimsFromUserInfoEndpoint = true;
-    options.ClientId = "mango_old";
+    options.ClientId = "mango";
     options.ClientSecret = "secret".Sha256();
     options.ResponseType = OpenIdConnectResponseType.Code; // "code";
     options.ClaimActions.MapJsonKey("role", "role", "role");

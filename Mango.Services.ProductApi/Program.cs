@@ -1,4 +1,5 @@
 using AutoMapper;
+using Mango.Extensions;
 using Mango.Services.ProductApi;
 using Mango.Services.ProductApi.DbContexts;
 using Mango.Services.ProductApi.Repository;
@@ -38,6 +39,7 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "mango");
+        //policy.RequireScope("mango");
     });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
