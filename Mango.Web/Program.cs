@@ -1,31 +1,46 @@
 using Mango.Web;
+using Mango.Web.Models;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddHttpClient<IProductService, ProductService>();
+builder.Services.AddHttpClient<ICartService, CartService>();
+builder.Services.AddHttpClient<ICouponService, CouponService>();
 SD.ProductApiBase = builder.Configuration["ServiceUrls:ProductAPI"];
+SD.ShoppingCartApiBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
+SD.CouponApiBase = builder.Configuration["ServiceUrls:CouponAPI"];
 
-builder.Services.AddScoped<IProductService, ProductService>();  
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "oidc";
+    options.DefaultChallengeScheme = "oidc"; // OpenIdConnectDefaults.AuthenticationScheme
 }).AddCookie("Cookies", c => c.ExpireTimeSpan = TimeSpan.FromMinutes(10))
 .AddOpenIdConnect("oidc", options =>
 {
-    options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+    //oidc
+    //options.Authority = builder.Configuration["ServiceUrls:IdentityAPI"];
+    options.Authority = builder.Configuration["ServiceUrls:OpenIdAPI"];
     options.GetClaimsFromUserInfoEndpoint = true;
     options.ClientId = "mango";
-    options.ClientSecret = "secret";
-    options.ResponseType = "code";
+    options.ClientSecret = "secret".Sha256();
+    options.ResponseType = OpenIdConnectResponseType.Code; // "code";
+    options.ClaimActions.MapJsonKey("role", "role", "role");
+    options.ClaimActions.MapJsonKey("sub", "sub", "sub");
 
     options.TokenValidationParameters.NameClaimType = "name";
     options.TokenValidationParameters.RoleClaimType = "role";
+    options.Scope.Add("mango");
     options.SaveTokens = true;
 });
 

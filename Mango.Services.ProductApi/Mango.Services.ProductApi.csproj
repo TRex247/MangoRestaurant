@@ -20,4 +20,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Mango.Extensions\Mango.Extensions.csproj" />
+  </ItemGroup>
+
 </Project>

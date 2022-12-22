@@ -1,4 +1,5 @@
 using AutoMapper;
+using Mango.Extensions;
 using Mango.Services.ProductApi;
 using Mango.Services.ProductApi.DbContexts;
 using Mango.Services.ProductApi.Repository;
@@ -24,7 +25,8 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "https://localhost:7088/";
+        //options.Authority = "https://localhost:7088/";
+        options.Authority = "https://localhost:7287";
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false
@@ -37,6 +39,7 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("scope", "mango");
+        //policy.RequireScope("mango");
     });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
