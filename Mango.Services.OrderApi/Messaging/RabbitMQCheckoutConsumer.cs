@@ -8,13 +8,13 @@ using System.Text;
 
 namespace Mango.Services.OrderApi.Messaging
 {
-    public class RabbitMQConsumer : BackgroundService
+    public class RabbitMQCheckoutConsumer : BackgroundService
     {
         private readonly OrderRepository _orderRepository;
         private IConnection _connection;
         private IModel _channel;
 
-        public RabbitMQConsumer(OrderRepository orderRepository)
+        public RabbitMQCheckoutConsumer(OrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
 
