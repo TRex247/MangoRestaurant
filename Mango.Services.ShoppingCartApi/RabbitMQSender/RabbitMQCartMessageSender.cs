@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Mango.Services.ShoppingCartApi.RabbitMQSender
 {
-    public class RabbitMQCardMessageSender : IRabbitMQCardMessageSender
+    public class RabbitMQCartMessageSender : IRabbitMQCartMessageSender
     {
         private readonly string _hostname;
         private readonly string _password;
         private readonly string _username;
         private IConnection _connection;
 
-        public RabbitMQCardMessageSender()
+        public RabbitMQCartMessageSender()
         {
             _hostname = "localhost";
             _password = "guest";

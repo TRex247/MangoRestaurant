@@ -14,10 +14,10 @@ namespace Mango.Services.ShoppingCartApi.Controllers
         private readonly ICartRepository _cartRepository;
         private readonly ICouponRepository _couponRepository;
         private readonly IMessageBus _messageBus;
-        private readonly IRabbitMQCardMessageSender _messageSender;
+        private readonly IRabbitMQCartMessageSender _messageSender;
         protected ResponseDto _response;
 
-        public CartApiController(ICartRepository cartRepository, ICouponRepository couponRepository, IMessageBus messageBus, IRabbitMQCardMessageSender messageSender)
+        public CartApiController(ICartRepository cartRepository, ICouponRepository couponRepository, IMessageBus messageBus, IRabbitMQCartMessageSender messageSender)
         {
             _cartRepository = cartRepository;
             _couponRepository = couponRepository;

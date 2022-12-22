@@ -2,7 +2,7 @@
 
 namespace Mango.Services.ShoppingCartApi.RabbitMQSender
 {
-    public interface IRabbitMQCardMessageSender
+    public interface IRabbitMQCartMessageSender
     {
         void SendMessage(BaseMessage baseMessage, string queueName);
     }
